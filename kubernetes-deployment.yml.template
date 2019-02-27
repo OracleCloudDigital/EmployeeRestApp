@@ -5,7 +5,7 @@ metadata:
   labels:
     run: employee-rest-service
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -30,28 +30,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: employee-rest-service-svc
+  name: employee-rest-service
 spec:
-    type: ClusterIP
+    type: LoadBalancer
     ports:
     - name: http
-      port: 8081
+      port: 80
       targetPort: 8080
       protocol: TCP
     selector:
       run: employee-rest-service
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: employee-rest-service-ing
-  annotations:
-    kubernetes.io/ingress.class: traefik
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /EmployeeRestService
-        backend:
-          serviceName: employee-rest-service-svc
-          servicePort: 8081
